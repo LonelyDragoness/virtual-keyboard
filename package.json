@@ -1,0 +1,15 @@
+{
+  "name": "eslint-package",
+  "version": "1.0.0",
+  "description": "linter",
+  "main": "keyboard.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kasmyne",
+  "license": "ISC"
+}
