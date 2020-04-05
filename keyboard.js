@@ -249,9 +249,11 @@ const generateButtons = () => {
                 });
                 break;
             case "🌐":
-                if(currentLayout === engLayout) {
-                    currentLayout = ruLayout;
-                }
+                button.addEventListener("click", () => {
+                    if(currentLayout === engLayout) {
+                        currentLayout = ruLayout;
+                    }
+                });
                 break;
             case "Ctrl":
                 button.classList.add("keyboard__button--ctrl");
