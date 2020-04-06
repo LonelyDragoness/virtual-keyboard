@@ -1,6 +1,6 @@
 // TODO: add small alter-signs to keys.
 // TODO: fix caps+alt changing dirt.
-// Preparation
+// Layouts
 const engLayout = [
     "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
     "Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "DEL",
@@ -46,11 +46,25 @@ const logicFunction = () => {
     }
 };
 
+// Caret behavior
+const moveCaret = () => {
+    let text = document.querySelector("textarea");
+    let position = document.querySelector("textarea").textContent.length;
+    text.setSelectionRange(position,position);
+};
+const moveCaretSpecific = (posit) => {
+    let text = document.querySelector("textarea");
+    text.setSelectionRange(posit, posit);
+};
+
+/*document.querySelector("textarea").setSelectionRange(1, 1);*/
+
 // Generate buttons and their behavior
 window.addEventListener("click", (event) => {
     let sub = event.target.textContent;
-    if ([...sub].length === 1) {
+    if ([...sub].length === 1 && sub !== "🌐") {
         textField.textContent += `${event.target.innerText}`;
+        moveCaret();
     }
 });
 
@@ -69,12 +83,22 @@ const generateButtons = () => {
 
         switch (el) {
             case "Backspace":
-                /*TODO: implement*/
                 button.classList.add("keyboard__button--backspace");
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
-                    textField.innerText = textField.textContent.slice(0, -1);
+                    let start = document.querySelector("textarea").selectionStart;
+                    let end = document.querySelector("textarea").selectionEnd;
+                    if(start !== 0) {
+                        let subString = [...textField.textContent];
+                        subString.splice(start - 1, end - start + 1);
+                        subString = subString.join("");
+                        textField.textContent = subString;
+                        moveCaretSpecific(start - 1);
+                    }
                     });
+                break;
+            case "DEL":
+                button.classList.add("font16");
                 break;
             case " ":
                 button.classList.add("keyboard__button--space");
@@ -102,6 +126,7 @@ const generateButtons = () => {
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
                     textField.textContent += '\n';
+                    moveCaret();
                 });
                 break;
             case "Tab":
@@ -109,11 +134,8 @@ const generateButtons = () => {
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
                     textField.textContent += '  ';
+                    moveCaret();
                 });
-                break;
-            case "DEL":
-                /*TODO: implement*/
-                button.classList.add("font16");
                 break;
             case "Shift":
                 button.classList.add("keyboard__button--shift");
@@ -266,15 +288,23 @@ document.onkeydown = (event) => {
     }
     if (event.key === "ArrowUp") {
         document.querySelector(`[data="▲"]`).classList.add("activeKey");
+        event.preventDefault();
+        textField.textContent += "▲";
     }
     if (event.key === "ArrowDown") {
         document.querySelector(`[data="▼"]`).classList.add("activeKey");
+        event.preventDefault();
+        textField.textContent += "▼";
     }
     if (event.key === "ArrowLeft") {
         document.querySelector(`[data="◄"]`).classList.add("activeKey");
+        event.preventDefault();
+        textField.textContent += "◄";
     }
     if (event.key === "ArrowRight") {
         document.querySelector(`[data="►"]`).classList.add("activeKey");
+        event.preventDefault();
+        textField.textContent += "►";
     }
     if (event.key === "Meta") {
         document.querySelector(`[data="Win"]`).classList.add("activeKey");
@@ -285,6 +315,7 @@ document.onkeydown = (event) => {
     if (event.code === "Tab") {
         event.preventDefault();
         textField.textContent += '  ';
+
     }
     if (event.key === "Alt") {
         event.preventDefault();
