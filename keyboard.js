@@ -90,7 +90,11 @@ const generateButtons = () => {
                     let end = document.querySelector("textarea").selectionEnd;
                     if(start !== 0) {
                         let subString = [...textField.textContent];
-                        subString.splice(start - 1, end - start + 1);
+                        if (start === end) {
+                            subString.splice(start - 1, end - start + 1);
+                        } else {
+                            subString.splice(start, end - start);
+                        }
                         subString = subString.join("");
                         textField.textContent = subString;
                         moveCaretSpecific(start - 1);
@@ -99,6 +103,22 @@ const generateButtons = () => {
                 break;
             case "DEL":
                 button.classList.add("font16");
+                button.addEventListener("click", () => {
+                    let start = document.querySelector("textarea").selectionStart;
+                    let end = document.querySelector("textarea").selectionEnd;
+                    console.log("zbs");
+                    if (start !== [...textField.textContent].length) {
+                        let subString = [...textField.textContent];
+                        if (start === end) {
+                            subString.splice(start, end - start + 1);
+                        } else {
+                            subString.splice(start, end - start);
+                        }
+                        subString = subString.join("");
+                        textField.textContent = subString;
+                        moveCaretSpecific(start);
+                    }
+                });
                 break;
             case " ":
                 button.classList.add("keyboard__button--space");
@@ -308,6 +328,7 @@ document.onkeydown = (event) => {
     }
     if (event.key === "Meta") {
         document.querySelector(`[data="Win"]`).classList.add("activeKey");
+        event.preventDefault();
     }
     if (event.code === "Backslash") {
         document.querySelector("#button27").classList.add("activeKey");
@@ -315,6 +336,7 @@ document.onkeydown = (event) => {
     if (event.code === "Tab") {
         event.preventDefault();
         textField.textContent += '  ';
+        moveCaret();
 
     }
     if (event.key === "Alt") {
