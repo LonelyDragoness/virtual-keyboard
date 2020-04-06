@@ -97,3 +97,13 @@
 .keyboard__button--space {
     width: 350px;
 }
+
+.commentary {
+    margin: 50px auto 0 auto;
+    left: 300px;
+    height: 20px;
+    width: 450px;
+    font-family: sans-serif;
+    font-size: 18px;
+    color: darkblue;
+}

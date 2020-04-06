@@ -1,19 +1,12 @@
 // TODO: add small alter-signs to keys.
 // TODO: fix caps+alt changing dirt.
-//prevent standard "TAB" function
-document.onkeypress = function (item) {
-    if(item.keyCode === 9){
-        return false;
-    }
-};
-
 // Preparation
 const engLayout = [
     "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
     "Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "DEL",
     "Caps Lock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "ENTER",
     "Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "🌐", "▲", "Shift ",
-    "Ctrl", "Win", "Alt", " ", "Alt", "Ctrl", "◄", "▼", "►"
+    "Ctrl", "Win", "Alt", " ", "Alt ", "Ctrl ", "◄", "▼", "►"
 ];
 
 const ruLayout = [
@@ -21,7 +14,7 @@ const ruLayout = [
     "Tab", "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ", "\\", "DEL",
     "Caps Lock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "ENTER",
     "Shift", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".", "🌐", "▲", "Shift ",
-    "Ctrl", "Win", "Alt", " ", "Alt", "Ctrl", "◄", "▼", "►"
+    "Ctrl", "Win", "Alt", " ", "Alt ", "Ctrl ", "◄", "▼", "►"
 ];
 
 // Caps + shift dependencies
@@ -359,7 +352,15 @@ const generateButtons = () => {
                 button.classList.add("keyboard__button--ctrl");
                 button.classList.add("font16");
                 break;
+            case "Ctrl ":
+                button.classList.add("keyboard__button--ctrl");
+                button.classList.add("font16");
+                break;
             case "Alt":
+                button.classList.add("keyboard__button--alt");
+                button.classList.add("font16");
+                break;
+            case "Alt ":
                 button.classList.add("keyboard__button--alt");
                 button.classList.add("font16");
                 break;
@@ -393,30 +394,116 @@ const createElements = () => {
     mainDiv.className = "keyboard";
     mainDiv.appendChild(buttonsDiv);
     buttonsDiv.className = "keyboard__buttons";
+
+    const commentary = document.createElement("div");
+    commentary.className = "commentary";
+    commentary.innerText = "Комбинация клавиш для смены раскладки: Shift + Alt, либо нажатие на кнопку 🌐\n\n" +
+        "Операционная система: Windows 10.";
+    document.body.appendChild(commentary);
+
     generateButtons();
 };
 
 window.addEventListener("DOMContentLoaded", createElements);
 
-// Keys highlight
+// Keys highlight + shift/caps state
+// TODO: рефакторнуть event.key на switch.
 let layoutShift = 0;
 let layoutCtrl = 0;
 document.onkeydown = (event) => {
-    console.log(event);
-    if (event.key === "Shift") {layoutShift = 1}
-    if (event.key === "Alt") {layoutCtrl = 1}
-    document.querySelector (`[data="${event.key}"]`).classList.add("activeKey");
+    console.log(event); // TODO: убрать после дебага.
+    if (event.key === "Shift") {
+        layoutShift = 1;
+        shiftState = "on";
+        logicFunction();
+        if (event.code === "ShiftLeft") {
+            document.querySelector(`[data="Shift"]`).classList.add("activeKey");
+            document.querySelector(`[data="Shift"]`).classList.remove("keyboard__button--pressed");
+        } else {
+            document.querySelector(`[data="Shift "]`).classList.add("activeKey");
+            document.querySelector(`[data="Shift "]`).classList.remove("keyboard__button--pressed");
+        }
+    }
+    if (event.key === "Alt") {
+        layoutCtrl = 1;
+        if (event.code === "AltLeft") {
+            document.querySelector(`[data="Alt"]`).classList.add("activeKey");
+        } else {
+            document.querySelector(`[data="Alt "]`).classList.add("activeKey");
+        }
+    }
+    if (event.key === "CapsLock") {
+        if (capsState === "off") {
+            capsState = "on";
+            logicFunction();
+            document.querySelector(`[data="Caps Lock"]`).classList.add("keyboard__button--pressed");
+        } else {
+            capsState = "off";
+            logicFunction();
+            document.querySelector(`[data="Caps Lock"]`).classList.remove("keyboard__button--pressed");
+        }
+    }
+    if (event.key === "Control") {
+        if (event.code === "ControlLeft") {
+            document.querySelector(`[data="Ctrl"]`).classList.add("activeKey");
+        } else {
+            document.querySelector(`[data="Ctrl "]`).classList.add("activeKey");
+        }
+    }
+    if (event.key === "Delete") {
+        document.querySelector(`[data="DEL"]`).classList.add("activeKey");
+    }
+    if (event.key === "Enter") {
+        document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
+    }
+    if (event.key === "ArrowUp") {
+        document.querySelector(`[data="▲"]`).classList.add("activeKey");
+    }
+    if (event.key === "ArrowDown") {
+        document.querySelector(`[data="▼"]`).classList.add("activeKey");
+    }
+    if (event.key === "ArrowLeft") {
+        document.querySelector(`[data="◄"]`).classList.add("activeKey");
+    }
+    if (event.key === "ArrowRight") {
+        document.querySelector(`[data="►"]`).classList.add("activeKey");
+    }
+    if (event.key === "Meta") {
+        document.querySelector(`[data="Win"]`).classList.add("activeKey");
+    }
+    if (event.code === "Backslash") {
+        document.querySelector("#button27").classList.add("activeKey");
+    }
+    if (event.code === "Tab") {
+        event.preventDefault();
+        textField.textContent += '  ';
+    }
+    if (event.key === "Alt") {
+        event.preventDefault();
+    }
 
+    if (event.key !== "CapsLock" && event.key !== "Control" && event.code !== "AltRight" && event.code !== "ShiftRight"
+        && event.code !== "Delete" && event.code !== "Enter" && event.code !== "MetaLeft" && event.code !== "ArrowUp"
+        && event.code !== "ArrowDown" && event.code !== "ArrowLeft" && event.code !== "ArrowRight"
+        && event.code !== "Backslash") {
+        document.querySelector(`[data="${event.key}"]`).classList.add("activeKey");
+    }
 };
 
-// Shift + alt layout change
-document.onkeyup = () => {
+document.onkeyup = (event) => {
     document.querySelectorAll(".keyboard__button").forEach((el) => {
         el.classList.remove("activeKey");
+        if (event.key === "Shift") {
+            shiftState = "off";
+            rightShiftState = "off";
+            logicFunction();
+            document.querySelector(`[data="Shift"]`).classList.remove("keyboard__button--pressed");
+            document.querySelector(`[data="Shift "]`).classList.remove("keyboard__button--pressed");
+        }
+        // Shift + alt layout change
         if (layoutCtrl === 1  && layoutShift === 1) {
             layoutShift = 0;
             layoutCtrl = 0;
-
             if (currentLayout === engLayout) {
                 currentLayout = ruLayout;
                 document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
