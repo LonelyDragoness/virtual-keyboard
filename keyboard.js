@@ -515,3 +515,21 @@ document.onkeyup = (event) => {
         }
     });
 };
+
+// Save layout on page reloading.
+const saveLayout = () => {
+    if (currentLayout === engLayout) {
+        localStorage.setItem('layout', `English`);
+    } else {
+        localStorage.setItem('layout', `Russian`);
+    }
+};
+
+if (localStorage.getItem('layout') === "Russian") {
+    currentLayout = ruLayout;
+} else if (localStorage.getItem('layout') === "English") {
+    currentLayout = engLayout;
+}
+console.info( "Virtual keyboard opened. Layout set to: " + localStorage.getItem('layout') + ".");
+
+window.onbeforeunload = saveLayout;
