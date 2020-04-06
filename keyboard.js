@@ -1,5 +1,6 @@
 // TODO: add small alter-signs to keys.
 // TODO: fix caps+alt changing dirt.
+// TODO: refactor css code.
 // Layouts
 const engLayout = [
     "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
@@ -47,27 +48,67 @@ const logicFunction = () => {
 };
 
 // Caret behavior
-const moveCaret = () => {
-    let text = document.querySelector("textarea");
-    let position = document.querySelector("textarea").textContent.length;
-    text.setSelectionRange(position,position);
-};
 const moveCaretSpecific = (posit) => {
     let text = document.querySelector("textarea");
     text.setSelectionRange(posit, posit);
 };
 
-/*document.querySelector("textarea").setSelectionRange(1, 1);*/
-
 // Generate buttons and their behavior
 window.addEventListener("click", (event) => {
     let sub = event.target.textContent;
     if ([...sub].length === 1 && sub !== "🌐") {
-        textField.textContent += `${event.target.innerText}`;
-        moveCaret();
+        addText(`${event.target.innerText}`);
     }
 });
 
+// Main input function
+const addText = (value, jump = 1) => {
+    let start = document.querySelector("textarea").selectionStart;
+    let result = "";
+    let subString1 = [...textField.textContent];
+    let subString2 = [...textField.textContent];
+    subString1.splice(start, textField.textContent.length);
+    subString2.splice(0, start);
+    result  = subString1.join("") + value + subString2.join("");
+    textField.textContent = result;
+    moveCaretSpecific(start + jump);
+};
+
+// DEL button
+const del = () => {
+    let start = document.querySelector("textarea").selectionStart;
+    let end = document.querySelector("textarea").selectionEnd;
+    if (start !== [...textField.textContent].length) {
+        let subString = [...textField.textContent];
+        if (start === end) {
+            subString.splice(start, end - start + 1);
+        } else {
+            subString.splice(start, end - start);
+        }
+        subString = subString.join("");
+        textField.textContent = subString;
+        moveCaretSpecific(start);
+    }
+};
+
+// Backspace button
+const backspace = () => {
+    let start = document.querySelector("textarea").selectionStart;
+    let end = document.querySelector("textarea").selectionEnd;
+    if(start !== 0) {
+        let subString = [...textField.textContent];
+        if (start === end) {
+            subString.splice(start - 1, end - start + 1);
+        } else {
+            subString.splice(start, end - start);
+        }
+        subString = subString.join("");
+        textField.textContent = subString;
+        moveCaretSpecific(start - 1);
+    }
+};
+
+// Virtual keyboard buttons and actions
 let capsState = "off";
 let shiftState = "off";
 let rightShiftState = "off";
@@ -86,44 +127,19 @@ const generateButtons = () => {
                 button.classList.add("keyboard__button--backspace");
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
-                    let start = document.querySelector("textarea").selectionStart;
-                    let end = document.querySelector("textarea").selectionEnd;
-                    if(start !== 0) {
-                        let subString = [...textField.textContent];
-                        if (start === end) {
-                            subString.splice(start - 1, end - start + 1);
-                        } else {
-                            subString.splice(start, end - start);
-                        }
-                        subString = subString.join("");
-                        textField.textContent = subString;
-                        moveCaretSpecific(start - 1);
-                    }
-                    });
+                    backspace();
+                });
                 break;
             case "DEL":
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
-                    let start = document.querySelector("textarea").selectionStart;
-                    let end = document.querySelector("textarea").selectionEnd;
-                    console.log("zbs");
-                    if (start !== [...textField.textContent].length) {
-                        let subString = [...textField.textContent];
-                        if (start === end) {
-                            subString.splice(start, end - start + 1);
-                        } else {
-                            subString.splice(start, end - start);
-                        }
-                        subString = subString.join("");
-                        textField.textContent = subString;
-                        moveCaretSpecific(start);
-                    }
+                    del();
                 });
                 break;
             case " ":
                 button.classList.add("keyboard__button--space");
                 button.addEventListener("click", () => {
-                    textField.textContent += ' ';
+                    addText(" ");
                 });
                 break;
             case "Caps Lock":
@@ -145,16 +161,14 @@ const generateButtons = () => {
                 button.classList.add("keyboard__button--enter");
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
-                    textField.textContent += '\n';
-                    moveCaret();
+                    addText("\n");
                 });
                 break;
             case "Tab":
                 button.classList.add("keyboard__button--tab");
                 button.classList.add("font16");
                 button.addEventListener("click", () => {
-                    textField.textContent += '  ';
-                    moveCaret();
+                    addText("  ", 2);
                 });
                 break;
             case "Shift":
@@ -254,13 +268,19 @@ const createElements = () => {
     generateButtons();
 };
 
+// Create page when DOM is loaded
 window.addEventListener("DOMContentLoaded", createElements);
 
-// Keys highlight + shift/caps state
+// Highlighting and physical keyboard behavior
 // TODO: рефакторнуть event.key на switch.
 let layoutShift = 0;
 let layoutCtrl = 0;
 document.onkeydown = (event) => {
+    if (event.key.length === 1) {
+        event.preventDefault();
+        addText(`${event.key}`);
+    }
+    addText(`${event.target.innerText}`);
     console.log(event); // TODO: убрать после дебага.
     if (event.key === "Shift") {
         layoutShift = 1;
@@ -302,29 +322,33 @@ document.onkeydown = (event) => {
     }
     if (event.key === "Delete") {
         document.querySelector(`[data="DEL"]`).classList.add("activeKey");
+        event.preventDefault();
+        del();
     }
     if (event.key === "Enter") {
         document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
+        event.preventDefault();
+        addText("\n");
     }
     if (event.key === "ArrowUp") {
         document.querySelector(`[data="▲"]`).classList.add("activeKey");
         event.preventDefault();
-        textField.textContent += "▲";
+        addText("▲");
     }
     if (event.key === "ArrowDown") {
         document.querySelector(`[data="▼"]`).classList.add("activeKey");
         event.preventDefault();
-        textField.textContent += "▼";
+        addText("▼");
     }
     if (event.key === "ArrowLeft") {
         document.querySelector(`[data="◄"]`).classList.add("activeKey");
         event.preventDefault();
-        textField.textContent += "◄";
+        addText("◄");
     }
     if (event.key === "ArrowRight") {
         document.querySelector(`[data="►"]`).classList.add("activeKey");
         event.preventDefault();
-        textField.textContent += "►";
+        addText("►");
     }
     if (event.key === "Meta") {
         document.querySelector(`[data="Win"]`).classList.add("activeKey");
@@ -335,9 +359,15 @@ document.onkeydown = (event) => {
     }
     if (event.code === "Tab") {
         event.preventDefault();
-        textField.textContent += '  ';
-        moveCaret();
-
+        addText("  ", 2);
+        }
+    if (event.code === "Space") {
+        event.preventDefault();
+        addText(" ");
+    }
+    if (event.code === "Backspace") {
+        event.preventDefault();
+        backspace();
     }
     if (event.key === "Alt") {
         event.preventDefault();
@@ -396,7 +426,6 @@ if (localStorage.getItem('layout') === "Russian") {
     currentLayout = engLayout;
 }
 console.info( "Virtual keyboard opened. Layout set to: " + localStorage.getItem('layout') + ".");
-
 window.onbeforeunload = saveLayout;
 
 // Layout switch/caps functions
