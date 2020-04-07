@@ -79,35 +79,37 @@ const addText = (value, jump = 1) => {
 
 // DEL button
 const del = (mod = 0) => {
-    let start = document.querySelector("textarea").selectionStart + mod;
+    let start = document.querySelector("textarea").selectionStart;
     let end = document.querySelector("textarea").selectionEnd;
     if (start !== [...textField.textContent].length) {
         let subString = [...textField.textContent];
         if (start === end) {
-            subString.splice(start, end - start + 1);
+            subString.splice(start - mod, end - start + 1);
         } else {
             subString.splice(start, end - start);
         }
         subString = subString.join("");
         textField.textContent = subString;
-        moveCaretSpecific(start);
+        moveCaretSpecific(start - mod);
+    } else if ([...textField.textContent].length === 1 && start === 1) {
+        textField.textContent = "";
     }
 };
 
 // Backspace button
 const backspace = (mod = 0) => {
-    let start = document.querySelector("textarea").selectionStart - mod;
+    let start = document.querySelector("textarea").selectionStart;
     let end = document.querySelector("textarea").selectionEnd;
     if(start !== 0) {
         let subString = [...textField.textContent];
         if (start === end) {
-            subString.splice(start - 1, end - start + 1);
+            subString.splice(start - 1 - mod, end - start + 1);
         } else {
-            subString.splice(start, end - start + mod);
+            subString.splice(start - mod, end - start + mod);
         }
         subString = subString.join("");
         textField.textContent = subString;
-        moveCaretSpecific(start - 1);
+        moveCaretSpecific(start - 1 - mod);
     }
 };
 
@@ -357,7 +359,7 @@ document.onkeydown = (event) => {
         case "Delete":
             document.querySelector(`[data="DEL"]`).classList.add("activeKey");
             event.preventDefault();
-            del(-1);
+            del(1);
             break;
         case "Enter":
             document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
