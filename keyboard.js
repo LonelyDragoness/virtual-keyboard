@@ -347,21 +347,25 @@ document.onkeydown = (event) => {
             document.querySelector(`[data="▲"]`).classList.add("activeKey");
             event.preventDefault();
             addText("▲");
+            caretMoveStop();
             break;
         case "ArrowDown":
             document.querySelector(`[data="▼"]`).classList.add("activeKey");
             event.preventDefault();
             addText("▼");
+            caretMoveStop();
             break;
         case "ArrowLeft":
             document.querySelector(`[data="◄"]`).classList.add("activeKey");
             event.preventDefault();
             addText("◄");
+            caretMoveStop();
             break;
         case "ArrowRight":
             document.querySelector(`[data="►"]`).classList.add("activeKey");
             event.preventDefault();
             addText("►");
+            caretMoveStop();
             break;
         case "Meta":
             document.querySelector(`[data="Win"]`).classList.add("activeKey");
@@ -388,6 +392,9 @@ document.onkeydown = (event) => {
                 backspace(1);
             }
             break;
+    }
+    if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        caretMoveStop();
     }
 
     if (event.key === "Alt") {
