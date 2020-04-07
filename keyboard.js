@@ -303,6 +303,9 @@ document.onkeydown = (event) => {
         document.querySelector(`[data="►"]`).classList.add("activeKey");
         addText("►", 0);
     }
+    if (event.code === "Backslash") {
+        document.querySelector(`#button27`).classList.add("activeKey");
+    }
     if (event.key.length === 1) {
         event.preventDefault();
         addText(`${event.key}`, 0);
@@ -364,9 +367,6 @@ document.onkeydown = (event) => {
         case "Meta":
             document.querySelector(`[data="Win"]`).classList.add("activeKey");
             event.preventDefault();
-            break;
-        case "Backslash":
-            document.querySelector("#button27").classList.add("activeKey");
             break;
         case "Tab":
             event.preventDefault();
