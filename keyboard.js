@@ -53,6 +53,13 @@ const moveCaretSpecific = (posit) => {
     text.setSelectionRange(posit, posit);
 };
 
+const caretMoveStop = () => {
+    let savedPos = document.querySelector("textarea").selectionStart;
+    if (savedPos !== textField.textContent.length) {
+        moveCaretSpecific(savedPos -1);
+    }
+};
+
 // Generate buttons and their behavior
 window.addEventListener("click", (event) => {
     let sub = event.target.textContent;
@@ -279,7 +286,6 @@ const createElements = () => {
 window.addEventListener("DOMContentLoaded", createElements);
 
 // Highlighting and physical keyboard behavior
-// TODO: рефакторнуть event.key на switch.
 let layoutShift = 0;
 let layoutCtrl = 0;
 document.onkeydown = (event) => {
@@ -288,100 +294,107 @@ document.onkeydown = (event) => {
         addText(`${event.key}`, 0);
     }
     addText(`${event.target.innerText}`);
-    if (event.key === "Shift") {
-        layoutShift = 1;
-        shiftState = "on";
-        logicFunction();
-        if (event.code === "ShiftLeft") {
-            document.querySelector(`[data="Shift"]`).classList.add("activeKey");
-            document.querySelector(`[data="Shift"]`).classList.remove("keyboard__button--pressed");
-        } else {
-            document.querySelector(`[data="Shift "]`).classList.add("activeKey");
-            document.querySelector(`[data="Shift "]`).classList.remove("keyboard__button--pressed");
-        }
-    }
-    if (event.key === "Alt") {
-        layoutCtrl = 1;
-        if (event.code === "AltLeft") {
-            document.querySelector(`[data="Alt"]`).classList.add("activeKey");
-        } else {
-            document.querySelector(`[data="Alt "]`).classList.add("activeKey");
-        }
-    }
-    if (event.key === "CapsLock") {
-        if (capsState === "off") {
-            capsState = "on";
+    switch (event.key) {
+        case "Shift":
+            layoutShift = 1;
+            shiftState = "on";
             logicFunction();
-            document.querySelector(`[data="Caps Lock"]`).classList.add("keyboard__button--pressed");
-        } else {
-            capsState = "off";
-            logicFunction();
-            document.querySelector(`[data="Caps Lock"]`).classList.remove("keyboard__button--pressed");
-        }
+            if (event.code === "ShiftLeft") {
+                document.querySelector(`[data="Shift"]`).classList.add("activeKey");
+                document.querySelector(`[data="Shift"]`).classList.remove("keyboard__button--pressed");
+            } else {
+                document.querySelector(`[data="Shift "]`).classList.add("activeKey");
+                document.querySelector(`[data="Shift "]`).classList.remove("keyboard__button--pressed");
+            }
+            caretMoveStop();
+            break;
+        case "Alt":
+            layoutCtrl = 1;
+            if (event.code === "AltLeft") {
+                document.querySelector(`[data="Alt"]`).classList.add("activeKey");
+            } else {
+                document.querySelector(`[data="Alt "]`).classList.add("activeKey");
+            }
+            caretMoveStop();
+            break;
+        case "CapsLock":
+            if (capsState === "off") {
+                capsState = "on";
+                logicFunction();
+                document.querySelector(`[data="Caps Lock"]`).classList.add("keyboard__button--pressed");
+            } else {
+                capsState = "off";
+                logicFunction();
+                document.querySelector(`[data="Caps Lock"]`).classList.remove("keyboard__button--pressed");
+            }
+            caretMoveStop();
+            break;
+        case "Control":
+            if (event.code === "ControlLeft") {
+                document.querySelector(`[data="Ctrl"]`).classList.add("activeKey");
+            } else {
+                document.querySelector(`[data="Ctrl "]`).classList.add("activeKey");
+            }
+            caretMoveStop();
+            break;
+        case "Delete":
+            document.querySelector(`[data="DEL"]`).classList.add("activeKey");
+            event.preventDefault();
+            del(-1);
+            break;
+        case "Enter":
+            document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
+            event.preventDefault();
+            addText("\n");
+            break;
+        case "ArrowUp":
+            document.querySelector(`[data="▲"]`).classList.add("activeKey");
+            event.preventDefault();
+            addText("▲");
+            break;
+        case "ArrowDown":
+            document.querySelector(`[data="▼"]`).classList.add("activeKey");
+            event.preventDefault();
+            addText("▼");
+            break;
+        case "ArrowLeft":
+            document.querySelector(`[data="◄"]`).classList.add("activeKey");
+            event.preventDefault();
+            addText("◄");
+            break;
+        case "ArrowRight":
+            document.querySelector(`[data="►"]`).classList.add("activeKey");
+            event.preventDefault();
+            addText("►");
+            break;
+        case "Meta":
+            document.querySelector(`[data="Win"]`).classList.add("activeKey");
+            event.preventDefault();
+            break;
+        case "Backslash":
+            document.querySelector("#button27").classList.add("activeKey");
+            break;
+        case "Tab":
+            event.preventDefault();
+            addText("  ", 2);
+            break;
+        case "Space":
+            event.preventDefault();
+            addText(" ");
+            break;
+        case "Backspace":
+            event.preventDefault();
+            let subStr = document.querySelector("textarea").selectionStart;
+            if (subStr === textField.textContent.length) {
+                backspace()
+            } else if (subStr === 1) {
+                moveCaretSpecific(0);
+            } else {
+                backspace(1);
+            }
+            break;
     }
-    if (event.key === "Control") {
-        if (event.code === "ControlLeft") {
-            document.querySelector(`[data="Ctrl"]`).classList.add("activeKey");
-        } else {
-            document.querySelector(`[data="Ctrl "]`).classList.add("activeKey");
-        }
-    }
-    if (event.key === "Delete") {
-        document.querySelector(`[data="DEL"]`).classList.add("activeKey");
-        event.preventDefault();
-        del(-1);
-    }
-    if (event.key === "Enter") {
-        document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
-        event.preventDefault();
-        addText("\n");
-    }
-    if (event.key === "ArrowUp") {
-        document.querySelector(`[data="▲"]`).classList.add("activeKey");
-        event.preventDefault();
-        addText("▲");
-    }
-    if (event.key === "ArrowDown") {
-        document.querySelector(`[data="▼"]`).classList.add("activeKey");
-        event.preventDefault();
-        addText("▼");
-    }
-    if (event.key === "ArrowLeft") {
-        document.querySelector(`[data="◄"]`).classList.add("activeKey");
-        event.preventDefault();
-        addText("◄");
-    }
-    if (event.key === "ArrowRight") {
-        document.querySelector(`[data="►"]`).classList.add("activeKey");
-        event.preventDefault();
-        addText("►");
-    }
-    if (event.key === "Meta") {
-        document.querySelector(`[data="Win"]`).classList.add("activeKey");
-        event.preventDefault();
-    }
-    if (event.code === "Backslash") {
-        document.querySelector("#button27").classList.add("activeKey");
-    }
-    if (event.code === "Tab") {
-        event.preventDefault();
-        addText("  ", 2);
-        }
-    if (event.code === "Space") {
-        event.preventDefault();
-        addText(" ");
-    }
-    if (event.code === "Backspace") {
-        event.preventDefault();
-        let subStr = document.querySelector("textarea").selectionStart;
-        if (subStr === textField.textContent.length) {
-            backspace()
-        } else if (subStr === 1) {
-            moveCaretSpecific(0);
-        } else {
-            backspace(1);
-        }
-    }
+
     if (event.key === "Alt") {
         event.preventDefault();
     }
@@ -390,7 +403,9 @@ document.onkeydown = (event) => {
         && event.code !== "Delete" && event.code !== "Enter" && event.code !== "MetaLeft" && event.code !== "ArrowUp"
         && event.code !== "ArrowDown" && event.code !== "ArrowLeft" && event.code !== "ArrowRight"
         && event.code !== "Backslash") {
-        document.querySelector(`[data="${event.key}"]`).classList.add("activeKey");
+        if (document.querySelector(`[data="${event.key}"]`)) {
+            document.querySelector(`[data="${event.key}"]`).classList.add("activeKey");
+        }
     }
     // Shift + alt layout change
     if (layoutCtrl === 1  && layoutShift === 1) {
