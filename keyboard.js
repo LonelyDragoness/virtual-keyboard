@@ -285,6 +285,26 @@ window.addEventListener("DOMContentLoaded", createElements);
 let layoutShift = 0;
 let layoutCtrl = 0;
 document.onkeydown = (event) => {
+    if (event.key === "ArrowUp") {
+        event.preventDefault();
+        document.querySelector(`[data="▲"]`).classList.add("activeKey");
+        addText("▲", 0);
+    }
+    if (event.key === "ArrowDown") {
+        event.preventDefault();
+        document.querySelector(`[data="▼"]`).classList.add("activeKey");
+        addText("▼", 0);
+    }
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        document.querySelector(`[data="◄"]`).classList.add("activeKey");
+        addText("◄", 0);
+    }
+    if (event.key === "ArrowRight") {
+        event.preventDefault();
+        document.querySelector(`[data="►"]`).classList.add("activeKey");
+        addText("►", 0);
+    }
     if (event.key.length === 1) {
         event.preventDefault();
         addText(`${event.key}`, 0);
@@ -343,30 +363,6 @@ document.onkeydown = (event) => {
             event.preventDefault();
             addText("\n");
             break;
-        case "ArrowUp":
-            document.querySelector(`[data="▲"]`).classList.add("activeKey");
-            event.preventDefault();
-            addText("▲");
-            caretMoveStop();
-            break;
-        case "ArrowDown":
-            document.querySelector(`[data="▼"]`).classList.add("activeKey");
-            event.preventDefault();
-            addText("▼");
-            caretMoveStop();
-            break;
-        case "ArrowLeft":
-            document.querySelector(`[data="◄"]`).classList.add("activeKey");
-            event.preventDefault();
-            addText("◄");
-            caretMoveStop();
-            break;
-        case "ArrowRight":
-            document.querySelector(`[data="►"]`).classList.add("activeKey");
-            event.preventDefault();
-            addText("►");
-            caretMoveStop();
-            break;
         case "Meta":
             document.querySelector(`[data="Win"]`).classList.add("activeKey");
             event.preventDefault();
@@ -393,10 +389,6 @@ document.onkeydown = (event) => {
             }
             break;
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
-        caretMoveStop();
-    }
-
     if (event.key === "Alt") {
         event.preventDefault();
     }
