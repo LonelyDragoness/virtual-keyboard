@@ -64,7 +64,7 @@ window.addEventListener("click", (event) => {
 // Main input function
 const addText = (value, jump = 1) => {
     let start = document.querySelector("textarea").selectionStart;
-    let result = "";
+    let result;
     let subString1 = [...textField.textContent];
     let subString2 = [...textField.textContent];
     subString1.splice(start, textField.textContent.length);
@@ -75,8 +75,8 @@ const addText = (value, jump = 1) => {
 };
 
 // DEL button
-const del = () => {
-    let start = document.querySelector("textarea").selectionStart;
+const del = (mod = 0) => {
+    let start = document.querySelector("textarea").selectionStart + mod;
     let end = document.querySelector("textarea").selectionEnd;
     if (start !== [...textField.textContent].length) {
         let subString = [...textField.textContent];
@@ -92,19 +92,30 @@ const del = () => {
 };
 
 // Backspace button
-const backspace = () => {
-    let start = document.querySelector("textarea").selectionStart;
+const backspace = (mod = 0) => {
+    let start = document.querySelector("textarea").selectionStart - mod;
     let end = document.querySelector("textarea").selectionEnd;
     if(start !== 0) {
         let subString = [...textField.textContent];
         if (start === end) {
             subString.splice(start - 1, end - start + 1);
         } else {
-            subString.splice(start, end - start);
+            subString.splice(start, end - start + mod);
         }
         subString = subString.join("");
         textField.textContent = subString;
         moveCaretSpecific(start - 1);
+    }
+};
+
+// Layout swap function
+const layoutSwap = () => {
+    if (currentLayout === engLayout) {
+        currentLayout = ruLayout;
+        document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
+    } else {
+        currentLayout = engLayout;
+        document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
     }
 };
 
@@ -202,14 +213,10 @@ const generateButtons = () => {
                 break;
             case "🌐":
                 button.addEventListener("click", () => {
-                    if (currentLayout === engLayout) {
-                        currentLayout = ruLayout;
-                        document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
-                    } else {
-                        currentLayout = engLayout;
-                        document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
-                    }
+                    let savedPosition = document.querySelector("textarea").selectionStart;
+                    layoutSwap();
                     createElements();
+                    moveCaretSpecific(savedPosition);
                 });
                 break;
             case "Ctrl":
@@ -278,10 +285,9 @@ let layoutCtrl = 0;
 document.onkeydown = (event) => {
     if (event.key.length === 1) {
         event.preventDefault();
-        addText(`${event.key}`);
+        addText(`${event.key}`, 0);
     }
     addText(`${event.target.innerText}`);
-    console.log(event); // TODO: убрать после дебага.
     if (event.key === "Shift") {
         layoutShift = 1;
         shiftState = "on";
@@ -323,7 +329,7 @@ document.onkeydown = (event) => {
     if (event.key === "Delete") {
         document.querySelector(`[data="DEL"]`).classList.add("activeKey");
         event.preventDefault();
-        del();
+        del(-1);
     }
     if (event.key === "Enter") {
         document.querySelector(`[data="ENTER"]`).classList.add("activeKey");
@@ -367,7 +373,14 @@ document.onkeydown = (event) => {
     }
     if (event.code === "Backspace") {
         event.preventDefault();
-        backspace();
+        let subStr = document.querySelector("textarea").selectionStart;
+        if (subStr === textField.textContent.length) {
+            backspace()
+        } else if (subStr === 1) {
+            moveCaretSpecific(0);
+        } else {
+            backspace(1);
+        }
     }
     if (event.key === "Alt") {
         event.preventDefault();
@@ -381,16 +394,12 @@ document.onkeydown = (event) => {
     }
     // Shift + alt layout change
     if (layoutCtrl === 1  && layoutShift === 1) {
+        let savedPos = document.querySelector("textarea").selectionStart;
         layoutShift = 0;
         layoutCtrl = 0;
-        if (currentLayout === engLayout) {
-            currentLayout = ruLayout;
-            document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
-        } else {
-            currentLayout = engLayout;
-            document.querySelector("body").innerHTML = "<script src=\"./keyboard.js\"></script>";
-        }
+        layoutSwap();
         createElements();
+        moveCaretSpecific(savedPos);
     }
 };
 
