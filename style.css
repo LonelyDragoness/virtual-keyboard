@@ -1,0 +1,109 @@
+*:focus {
+    outline: none;
+}
+
+.screen {
+    margin: 20px auto 30px auto;
+}
+
+.textarea {
+    display: block;
+    width: 930px;
+    height: 200px;
+    margin: 0 auto;
+    font-size: 18px;
+    color: white;
+    background-color: #97A2AD;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #3ADDDD;
+    resize: none;
+    overflow-Y: auto;
+    outline: none;
+}
+
+.keyboard__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 930px;
+    height: 350px;
+    margin: 0 auto;
+    padding: 20px 0 0 20px;
+    background-color: #1B2132;
+    border-radius: 10px;
+    user-select: none;
+}
+
+.keyboard__button {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    line-height: 50px;
+    font-family: sans-serif;
+    text-align: center;
+    color: #3ADDDD;
+    background-color: #366C93;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+.font16 {
+    font-size: 16px;
+    letter-spacing: 0.04em;
+}
+
+.keyboard__button:active, .keyboard__button--pressed, .activeKey {
+    box-sizing: border-box;
+    line-height: 55px;
+    color: white;
+    background-color: rgba(54, 108, 147, 0.75);
+    border: 1px solid #3ADDDD;
+}
+
+.keyboard__button--pressed {
+    background-color: #28445A;
+    border: 1px solid #DB6C3D;
+}
+
+.keyboard__button--tab {
+    width: 70px;
+}
+
+.keyboard__button--enter {
+    width: 150px;
+}
+
+.keyboard__button--shift {
+    width: 130px;
+}
+
+.keyboard__button--ctrl {
+    width: 75px;
+}
+
+.keyboard__button--alt {
+    width: 65px;
+}
+
+.keyboard__button--backspace {
+    width: 130px;
+}
+
+.keyboard__button--caps {
+    width: 90px;
+}
+
+.keyboard__button--space {
+    width: 350px;
+}
+
+.commentary {
+    left: 300px;
+    width: 450px;
+    height: 100px;
+    margin: 50px auto 0 auto;
+    font-size: 18px;
+    font-family: sans-serif;
+    color: #1868C2;
+}
