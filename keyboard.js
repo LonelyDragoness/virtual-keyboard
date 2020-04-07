@@ -380,10 +380,9 @@ document.onkeydown = (event) => {
             break;
         case "Backspace":
             event.preventDefault();
-            let subStr = document.querySelector("textarea").selectionStart;
-            if (subStr === textField.textContent.length) {
+            if (document.querySelector("textarea").selectionStart === textField.textContent.length) {
                 backspace()
-            } else if (subStr === 1) {
+            } else if (document.querySelector("textarea").selectionStart === 1) {
                 moveCaretSpecific(0);
             } else {
                 backspace(1);
