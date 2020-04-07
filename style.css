@@ -8,9 +8,9 @@
 
 .textarea {
     display: block;
-    margin: 0 auto;
     width: 930px;
     height: 200px;
+    margin: 0 auto;
     font-size: 18px;
     color: white;
     background-color: #97A2AD;
@@ -24,29 +24,29 @@
 .keyboard__buttons {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 auto;
     width: 930px;
     height: 350px;
-    background-color: #1B2132;
+    margin: 0 auto;
     padding: 20px 0 0 20px;
-    user-select: none;
+    background-color: #1B2132;
     border-radius: 10px;
+    user-select: none;
 }
 
 .keyboard__button {
-    text-align: center;
-    height: 50px;
     width: 50px;
-    font-family: sans-serif;
+    height: 50px;
+    margin-right: 10px;
+    margin-bottom: 20px;
     font-size: 20px;
     line-height: 50px;
+    font-family: sans-serif;
+    text-align: center;
     color: #3ADDDD;
     background-color: #366C93;
     border-radius: 5px;
     cursor: pointer;
     outline: none;
-    margin-right: 10px;
-    margin-bottom: 20px;
 }
 .font16 {
     font-size: 16px;
@@ -55,10 +55,10 @@
 
 .keyboard__button:active, .keyboard__button--pressed, .activeKey {
     box-sizing: border-box;
-    border: 1px solid #3ADDDD;
+    line-height: 55px;
     color: white;
     background-color: rgba(54, 108, 147, 0.75);
-    line-height: 55px;
+    border: 1px solid #3ADDDD;
 }
 
 .keyboard__button--pressed {
@@ -99,11 +99,11 @@
 }
 
 .commentary {
-    margin: 50px auto 0 auto;
     left: 300px;
-    height: 100px;
     width: 450px;
-    font-family: sans-serif;
+    height: 100px;
+    margin: 50px auto 0 auto;
     font-size: 18px;
+    font-family: sans-serif;
     color: #1868C2;
 }
