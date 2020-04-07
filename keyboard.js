@@ -2,7 +2,7 @@ const engLayout = [
     "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
     "Tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\", "DEL",
     "Caps Lock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "ENTER",
-    "Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "🌐", "▲", "Shift ",
+    "Shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "❌", "▲", "Shift ",
     "Ctrl", "Win", "Alt", " ", "Alt ", "Ctrl ", "◄", "▼", "►"
 ];
 
@@ -10,7 +10,7 @@ const ruLayout = [
     "ё", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "Backspace",
     "Tab", "й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х", "ъ", "\\", "DEL",
     "Caps Lock", "ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э", "ENTER",
-    "Shift", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".", "🌐", "▲", "Shift ",
+    "Shift", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", ".", "❌", "▲", "Shift ",
     "Ctrl", "Win", "Alt", " ", "Alt ", "Ctrl ", "◄", "▼", "►"
 ];
 
@@ -59,7 +59,7 @@ const caretMoveStop = () => {
 // Generate buttons and their behavior
 window.addEventListener("click", (event) => {
     let sub = event.target.textContent;
-    if ([...sub].length === 1 && sub !== "🌐") {
+    if ([...sub].length === 1 && sub !== "❌") {
         addText(`${event.target.innerText}`);
     }
 });
@@ -214,12 +214,9 @@ const generateButtons = () => {
                     logicFunction();
                 });
                 break;
-            case "🌐":
+            case "❌":
                 button.addEventListener("click", () => {
-                    let savedPosition = document.querySelector("textarea").selectionStart;
-                    layoutSwap();
-                    createElements();
-                    moveCaretSpecific(savedPosition);
+                    textField.textContent = "";
                 });
                 break;
             case "Ctrl":
@@ -271,7 +268,8 @@ const createElements = () => {
 
     const commentary = document.createElement("div");
     commentary.className = "commentary";
-    commentary.innerText = "Комбинация клавиш для смены раскладки: Shift + Alt, либо нажатие на кнопку 🌐\n\n" +
+    commentary.innerText = "Комбинация клавиш для смены раскладки: Shift + Alt.\n" +
+        "Кнопка ❌ очищает поле\n\n" +
         "Операционная система: Windows 10.";
     document.body.appendChild(commentary);
 
